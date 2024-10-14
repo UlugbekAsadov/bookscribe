@@ -18,7 +18,7 @@ module.exports = {
     project: "./tsconfig.json",
     sourceType: "module",
   },
-  plugins: ["@typescript-eslint", "react"],
+  plugins: ["@typescript-eslint", "react", "simple-import-sort", "import"],
   rules: {
     "@typescript-eslint/indent": [
       "warn",
@@ -40,5 +40,10 @@ module.exports = {
     ],
     indent: "off",
     "no-unused-vars": "off",
+    "simple-import-sort/imports": "error",
+    "simple-import-sort/exports": "error",
+    "import/first": "error",
+    "import/newline-after-import": "error",
+    "import/no-duplicates": "error",
   },
 };
