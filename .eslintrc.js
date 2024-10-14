@@ -20,7 +20,6 @@ module.exports = {
   },
   plugins: ["@typescript-eslint", "react"],
   rules: {
-    "@typescript-eslint/explicit-function-return-type": "error",
     "@typescript-eslint/indent": [
       "warn",
       2,
