@@ -28,6 +28,9 @@
     "lint": "eslint .",
     "prepare": "husky install"
   },
+  "lint-staged": {
+    "*.{js,ts,tsx,jsx}": "eslint --cache --fix"
+  },
   "eslintConfig": {
     "extends": [
       "react-app",
@@ -53,9 +56,5 @@
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "husky": "^8.0.0",
     "prettier": "^3.3.3"
-  },
-  "lint-staged": {
-    "*.js": "eslint --cache --fix",
-    "*.{js,css,md}": "prettier --write"
   }
 }
