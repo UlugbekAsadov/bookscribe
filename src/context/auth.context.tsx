@@ -6,9 +6,12 @@ import { useNavigate } from "react-router-dom";
 import { apiFetcher, requestStatus } from "../api/api";
 import { IRegisterForm } from "../utils/interfaces/auth.interface";
 import { IRequest } from "../utils/interfaces/request.interface";
+import { removeCookie } from "../utils/utils";
+import { useUserContext } from "./user.context";
 
 interface IAuthContext {
   registerUser: (values: IRegisterForm) => Promise<void>;
+  signOut: () => void;
 }
 
 const AuthContext = createContext<IAuthContext | null>(null);
@@ -27,7 +30,7 @@ interface IProps {
 
 export const AuthContextProvider = ({ children }: IProps) => {
   const [registerRequest, setRegisterRequest] = useState<IRequest>(requestStatus);
-
+  const { fetchCurrentUser } = useUserContext();
   const navigate = useNavigate();
 
   const registerUser = useCallback(async (registerForm: IRegisterForm) => {
@@ -38,6 +41,7 @@ export const AuthContextProvider = ({ children }: IProps) => {
     if (res.isOk) {
       Cookies.set("bookScribe_at", res.data.key, { expires: 14, secure: true });
       Cookies.set("bookScribe_secret", res.data.secret, { expires: 14, secure: true });
+      fetchCurrentUser();
       navigate("/");
       setRegisterRequest((prevVal) => ({ ...prevVal, isFetching: false, isSuccess: true, successMessage: "Signed up. Redirecting..." }));
     } else {
@@ -45,7 +49,13 @@ export const AuthContextProvider = ({ children }: IProps) => {
     }
   }, []);
 
-  const value = useMemo(() => ({ registerUser }), []);
+  const signOut = useCallback(() => {
+    removeCookie("bookScribe_at");
+    removeCookie("bookScribe_secret");
+    navigate("/register");
+  }, []);
+
+  const value = useMemo(() => ({ registerUser, signOut }), []);
 
   return (
     <AuthContext.Provider value={value}>

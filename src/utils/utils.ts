@@ -5,3 +5,7 @@ export function getCookie(name: string): string | null {
   if (parts.length === 2) return parts.pop()?.split(";").shift() || null;
   return null;
 }
+
+export function removeCookie(name: string) {
+  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+}

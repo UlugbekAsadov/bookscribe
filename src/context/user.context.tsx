@@ -1,10 +1,14 @@
-import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { apiFetcher } from "../api/api";
+import { apiFetcher, requestStatus } from "../api/api";
+import { IRequest } from "../utils/interfaces/request.interface";
 import { IUser } from "../utils/interfaces/user.interface";
 
-interface IUserContext {}
+interface IUserContext {
+  user: IUser | null;
+  fetchCurrentUser: () => Promise<void>;
+}
 
 const UserContext = createContext<IUserContext | null>(null);
 
@@ -22,25 +26,31 @@ interface IProps {
 
 export const UserContextProvider = ({ children }: IProps) => {
   const [user, setUser] = useState<IUser | null>(null);
-  const [isUserFetching, setIsUserFetching] = useState<boolean>(false);
+  const [userFetchingRequest, setUserFetchingRequest] = useState<IRequest>(requestStatus);
   const navigate = useNavigate();
 
   const fetchCurrentUser = async () => {
-    const user = await apiFetcher<IUser>("/myself");
+    setUserFetchingRequest({ ...requestStatus, isFetching: true });
 
-    const hasUser = user.isOk;
+    const res = await apiFetcher<IUser>("/myself");
 
-    if (!hasUser) navigate("/register");
+    if (res.isOk) {
+      setUserFetchingRequest((prevVal) => ({ ...prevVal, isFetching: false, isSuccess: true, successMessage: res.message }));
+      setUser(res.data);
+    } else {
+      navigate("/register");
+      setUserFetchingRequest((prevVal) => ({ ...prevVal, isFetching: false, isError: true, errorMessage: res.message }));
+    }
   };
 
   useEffect(() => {
     fetchCurrentUser();
   }, []);
 
-  if (isUserFetching) {
+  const value = useMemo(() => ({ user, fetchCurrentUser }), [user]);
+
+  if (userFetchingRequest.isFetching) {
     return null;
   }
-
-  const value = useMemo(() => ({ user }), [user]);
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };
