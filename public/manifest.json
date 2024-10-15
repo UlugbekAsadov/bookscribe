@@ -1,6 +1,6 @@
 {
-  "short_name": "Library",
-  "name": "Library web application for job interview",
+  "short_name": "BookScribe",
+  "name": "BookScribe web application for job interview",
   "icons": [
     {
       "src": "favicon.ico",

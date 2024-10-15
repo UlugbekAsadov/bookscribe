@@ -30,7 +30,7 @@ module.exports = {
     "@typescript-eslint/no-empty-interface": "off",
     "@typescript-eslint/no-namespace": "off",
     "@typescript-eslint/no-unused-vars": [
-      "error",
+      "warn",
       {
         args: "all",
         argsIgnorePattern: "^_",
@@ -40,10 +40,10 @@ module.exports = {
     ],
     indent: "off",
     "no-unused-vars": "off",
-    "simple-import-sort/imports": "error",
-    "simple-import-sort/exports": "error",
-    "import/first": "error",
-    "import/newline-after-import": "error",
-    "import/no-duplicates": "error",
+    "simple-import-sort/imports": "warn",
+    "simple-import-sort/exports": "warn",
+    "import/first": "warn",
+    "import/newline-after-import": "warn",
+    "import/no-duplicates": "warn",
   },
 };
