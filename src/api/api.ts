@@ -3,7 +3,7 @@ import CryptoJS from "crypto-js";
 import { IRequest } from "../utils/interfaces/request.interface";
 import { getCookie } from "../utils/utils";
 
-export interface FetcherOptions<T = any> {
+export interface FetcherOptions<T = unknown> {
   method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
   headers?: Record<string, string>;
   body?: T;
@@ -12,10 +12,10 @@ export interface FetcherOptions<T = any> {
 interface IResponse<T> {
   isOk: boolean;
   message: string;
-  data: T;
+  data: T | null;
 }
 
-function generateSign<T = any>(method: FetcherOptions["method"], url: string, body: T, userSecret: string | null) {
+function generateSign<T = unknown>(method: FetcherOptions["method"], url: string, body: T, userSecret: string | null) {
   const bodyStr = JSON.stringify(body);
 
   const stringToSign = bodyStr ? `${method}${url}${bodyStr}${userSecret}` : `${method}${url}${userSecret}`;
