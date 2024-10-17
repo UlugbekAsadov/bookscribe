@@ -1,6 +1,6 @@
 import { Box, Button, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 
 import { apiFetcher } from "../../api/api";
@@ -61,11 +61,45 @@ export const BooksPage = () => {
 
   return (
     <Box>
-      <Box display="flex" alignItems="center" justifyContent="space-between">
-        <Typography variant="h4" gutterBottom>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        mb={3}
+        sx={{
+          flexDirection: {
+            xs: "column",
+            sm: "row",
+          },
+          alignItems: {
+            xs: "start",
+            sm: "center",
+          },
+        }}
+      >
+        <Typography
+          sx={{
+            fontSize: {
+              xs: "1.5rem",
+              sm: "2rem",
+            },
+          }}
+        >
           All Books
         </Typography>
-        <Box display="flex" gap="12px">
+        <Box
+          display="flex"
+          gap="12px"
+          sx={{
+            flexDirection: {
+              xs: "column",
+              sm: "row",
+            },
+            width: {
+              xs: "100%",
+              sm: "unset",
+            },
+          }}
+        >
           <TextField
             id="outlined-basic"
             label="Search"
