@@ -44,7 +44,7 @@ export const useMutation = <T = unknown, V = unknown, E = unknown>({
           onSuccess?.(res.data);
         } else {
           setRequestStatus({ isError: true, isSuccess: false, isFetching: false });
-          onError?.(res.message as E);
+          onError?.(res as E);
         }
       } catch (error) {
         setRequestStatus({ isError: true, isSuccess: false, isFetching: false });

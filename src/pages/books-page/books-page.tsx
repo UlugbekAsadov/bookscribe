@@ -1,9 +1,10 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, selectClasses, Typography } from "@mui/material";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
 import { apiFetcher } from "../../api/api";
 import { BookCreateForm } from "../../components/books/book-create-form";
+import { BookEditForm } from "../../components/books/book-edit-form";
 import { BooksGrid } from "../../components/books/books-grid";
 import { useMutation } from "../../hooks/useMutation";
 import { useQuery } from "../../hooks/useQuery";
@@ -11,6 +12,7 @@ import { IBook, ICreateBookForm } from "../../utils/interfaces/book.interface";
 
 export const BooksPage = () => {
   const [isBookModalOpen, setIsBookModalOpen] = useState<boolean>(false);
+  const [selectedBook, setSelectedBook] = useState<IBook | null>(null);
 
   const { data: books, refetch } = useQuery({
     queryFn: () => apiFetcher<IBook[]>("/books", { method: "GET" }),
@@ -46,9 +48,10 @@ export const BooksPage = () => {
           Create Book
         </Button>
       </Box>
-      <BooksGrid books={books} />
+      <BooksGrid books={books} setSelectedBook={setSelectedBook} />
 
       <BookCreateForm isOpen={isBookModalOpen} onClose={() => setIsBookModalOpen(false)} onSubmit={createBook} />
+      {selectedBook && <BookEditForm selectedBook={selectedBook} setSelectedBook={setSelectedBook} refetch={refetch} />}
     </Box>
   );
 };

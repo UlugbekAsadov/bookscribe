@@ -28,7 +28,8 @@ export const BookCreateForm = ({ isOpen, onClose, onSubmit }: IProps) => {
       <DialogTitle>Create Book</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          To subscribe to this website, please enter your email address here. We will send updates occasionally.
+          To create a new book, please enter the ISBN of the book below. You can typically find the ISBN on the book's back cover or within
+          the copyright page. The ISBN is a unique identifier for books, and it's essential for cataloging.
         </DialogContentText>
         <TextField
           {...register("isbn", { required: { message: "This field is required", value: true } })}
