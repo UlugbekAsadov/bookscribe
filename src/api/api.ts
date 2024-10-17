@@ -9,10 +9,10 @@ export interface FetcherOptions<T = unknown> {
   body?: T;
 }
 
-interface IResponse<T> {
+export interface IResponse<T> {
   isOk: boolean;
   message: string;
-  data: T | null;
+  data: T | undefined;
 }
 
 function generateSign<T = unknown>(method: FetcherOptions["method"], url: string, body: T, userSecret: string | null) {
@@ -26,14 +26,12 @@ function generateSign<T = unknown>(method: FetcherOptions["method"], url: string
 }
 
 export const requestStatus: IRequest = {
-  errorMessage: "",
   isError: false,
   isSuccess: false,
-  successMessage: "",
   isFetching: false,
 };
 
-export async function apiFetcher<T>(url: string, options: FetcherOptions<T> = {}): Promise<IResponse<T>> {
+export async function apiFetcher<T, V = unknown>(url: string, options: FetcherOptions<V> = {}): Promise<IResponse<T>> {
   const { method = "GET", headers = {}, body } = options;
   const key = getCookie("bookScribe_at");
   const secret = getCookie("bookScribe_secret");

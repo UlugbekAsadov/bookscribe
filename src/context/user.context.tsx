@@ -1,13 +1,12 @@
-import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { createContext, ReactNode, useContext, useMemo } from "react";
 
-import { apiFetcher, requestStatus } from "../api/api";
-import { IRequest } from "../utils/interfaces/request.interface";
+import { apiFetcher } from "../api/api";
+import { useQuery } from "../hooks/useQuery";
 import { IUser } from "../utils/interfaces/user.interface";
 
 interface IUserContext {
-  user: IUser | null;
-  fetchCurrentUser: () => Promise<void>;
+  user?: IUser;
+  refetch: () => void;
 }
 
 const UserContext = createContext<IUserContext | null>(null);
@@ -25,31 +24,17 @@ interface IProps {
 }
 
 export const UserContextProvider = ({ children }: IProps) => {
-  const [user, setUser] = useState<IUser | null>(null);
-  const [userFetchingRequest, setUserFetchingRequest] = useState<IRequest>(requestStatus);
-  const navigate = useNavigate();
+  const {
+    data: user,
+    isFetching,
+    refetch,
+  } = useQuery({
+    queryFn: () => apiFetcher<IUser>("/myself"),
+  });
 
-  const fetchCurrentUser = async () => {
-    setUserFetchingRequest({ ...requestStatus, isFetching: true });
+  const value = useMemo(() => ({ user, refetch }), [user]);
 
-    const res = await apiFetcher<IUser>("/myself");
-
-    if (res.isOk) {
-      setUserFetchingRequest((prevVal) => ({ ...prevVal, isFetching: false, isSuccess: true, successMessage: res.message }));
-      setUser(res.data);
-    } else {
-      navigate("/register");
-      setUserFetchingRequest((prevVal) => ({ ...prevVal, isFetching: false, isError: true, errorMessage: res.message }));
-    }
-  };
-
-  useEffect(() => {
-    fetchCurrentUser();
-  }, []);
-
-  const value = useMemo(() => ({ user, fetchCurrentUser }), [user]);
-
-  if (userFetchingRequest.isFetching) {
+  if (isFetching) {
     return null;
   }
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
