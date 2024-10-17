@@ -12,7 +12,7 @@ export const initialRequestStatus: IRequest = {
 interface IQueryParams<T> {
   queryFn: () => Promise<IResponse<T>>;
   onSuccess?: (data?: T) => void;
-  onError?: (error?: any) => void;
+  onError?: (error?: unknown) => void;
   enabled?: boolean;
 }
 
