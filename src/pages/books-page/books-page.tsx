@@ -1,21 +1,38 @@
-import { Box, Button, Typography } from "@mui/material";
-import { useState } from "react";
+import { Box, Button, TextField, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
+import { useLocation, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
 import { apiFetcher } from "../../api/api";
 import { BookCreateForm } from "../../components/books/book-create-form";
 import { BookEditForm } from "../../components/books/book-edit-form";
 import { BooksGrid } from "../../components/books/books-grid";
+import { BooksLoader } from "../../components/books/books-loader";
+import { useDebounce } from "../../hooks/useDebounce";
 import { useMutation } from "../../hooks/useMutation";
 import { useQuery } from "../../hooks/useQuery";
 import { IBook, ICreateBookForm } from "../../utils/interfaces/book.interface";
 
+const SEARCH_DEBOUNCE_DELAY = 300; // 300ms
+
 export const BooksPage = () => {
   const [isBookModalOpen, setIsBookModalOpen] = useState<boolean>(false);
   const [selectedBook, setSelectedBook] = useState<IBook | null>(null);
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const searchTextFromQuery = queryParams.get("search");
+  const [searchText, setSearchText] = useState<string>(searchTextFromQuery ?? "");
+  const debouncedSearchText = useDebounce<string>(searchText, SEARCH_DEBOUNCE_DELAY);
 
-  const { data: books, refetch } = useQuery({
-    queryFn: () => apiFetcher<IBook[]>("/books", { method: "GET" }),
+  const {
+    data: books,
+    refetch,
+    isFetching,
+  } = useQuery({
+    // Search ishlamadi 500 error qaytyapti har qanaqa text yozsa
+    // queryFn: () => apiFetcher<IBook[]>(`/books/${debouncedSearchText}`, { method: "GET" }),
+    queryFn: () => apiFetcher<IBook[]>(`/books`, { method: "GET" }),
+    enabled: false,
   });
 
   const createBookMutation = useMutation<IBook, ICreateBookForm, string>({
@@ -38,17 +55,31 @@ export const BooksPage = () => {
     await createBookMutation.mutateAsync(values);
   };
 
+  useEffect(() => {
+    refetch();
+  }, [debouncedSearchText]);
+
   return (
     <Box>
       <Box display="flex" alignItems="center" justifyContent="space-between">
         <Typography variant="h4" gutterBottom>
           All Books
         </Typography>
-        <Button variant="contained" onClick={handleOpenModal}>
-          Create Book
-        </Button>
+        <Box display="flex" gap="12px">
+          <TextField
+            id="outlined-basic"
+            label="Search"
+            variant="outlined"
+            value={searchText}
+            size="small"
+            onChange={(e) => setSearchText(e.target.value)}
+          />
+          <Button variant="contained" onClick={handleOpenModal}>
+            Create Book
+          </Button>
+        </Box>
       </Box>
-      <BooksGrid books={books} setSelectedBook={setSelectedBook} />
+      {isFetching ? <BooksLoader /> : <BooksGrid books={books} setSelectedBook={setSelectedBook} />}
 
       <BookCreateForm isOpen={isBookModalOpen} onClose={() => setIsBookModalOpen(false)} onSubmit={createBook} />
       {selectedBook && <BookEditForm selectedBook={selectedBook} setSelectedBook={setSelectedBook} refetch={refetch} />}

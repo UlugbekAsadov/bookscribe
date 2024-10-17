@@ -1,6 +1,7 @@
 import { createContext, ReactNode, useContext, useMemo } from "react";
 
 import { apiFetcher } from "../api/api";
+import { GlobalLoader } from "../components/global-loader";
 import { useQuery } from "../hooks/useQuery";
 import { IUser } from "../utils/interfaces/user.interface";
 
@@ -35,7 +36,8 @@ export const UserContextProvider = ({ children }: IProps) => {
   const value = useMemo(() => ({ user, refetch }), [user]);
 
   if (isFetching) {
-    return null;
+    return <GlobalLoader />;
   }
+
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };
