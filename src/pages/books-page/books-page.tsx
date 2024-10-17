@@ -11,6 +11,8 @@ import { BooksLoader } from "../../components/books/books-loader";
 import { useDebounce } from "../../hooks/useDebounce";
 import { useMutation } from "../../hooks/useMutation";
 import { useQuery } from "../../hooks/useQuery";
+import { ErrorMessages } from "../../utils/enum/error-messages.enum";
+import { SuccessMessages } from "../../utils/enum/success-messages.enum";
 import { IBook, ICreateBookForm } from "../../utils/interfaces/book.interface";
 
 const SEARCH_DEBOUNCE_DELAY = 300; // 300ms
@@ -40,10 +42,10 @@ export const BooksPage = () => {
     onSuccess: () => {
       setIsBookModalOpen(false);
       refetch();
-      toast.success("Book successfully added to you library");
+      toast.success(SuccessMessages.BookSuccessfullyAdded);
     },
     onError: (err) => {
-      toast.error(err && "Book not found or already in your library");
+      toast.error(err && ErrorMessages.BookNotFound);
     },
   });
 
